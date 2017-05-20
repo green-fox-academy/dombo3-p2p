@@ -4,11 +4,16 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="template">
 <head>
+  <title>Enter Page</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
 <section layout:fragment="content">
-  <h1>Peer to Peer Chat program</h1>
+  <h1>Enter</h1>
+  <form action="#" th:action="@{/enter}" method="post">
+    <p>Choose your name: <input type="text" name="username"/></p>
+    <input type="submit"/>
+  </form>
 </section>
 </body>
 </html>
