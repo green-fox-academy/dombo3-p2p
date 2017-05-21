@@ -9,6 +9,15 @@
 <body>
 <section layout:fragment="content">
   <h1>Peer to Peer Chat program</h1>
+  <p th:text="|logged in as ${user.username}|"></p>
+  <p th:if="${usernameerror != null}" th:text="${usernameerror.error}"></p>
+  <form action="#" th:action="@{/update/{id}(id=${user.id})}" method="post">
+    <div>
+      <label>Your username:</label>
+      <input type="text" name="username" th:placeholder="${user.username}"/>
+      <input type="submit" value="update"/>
+    </div>
+  </form>
 </section>
 </body>
 </html>

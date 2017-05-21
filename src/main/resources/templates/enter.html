@@ -11,8 +11,13 @@
 <section layout:fragment="content">
   <h1>Enter</h1>
   <form action="#" th:action="@{/enter}" method="post">
-    <p>Choose your name: <input type="text" name="username"/></p>
-    <input type="submit"/>
+    <p th:if="${usernameerror != null}" th:text="${usernameerror.error}"></p>
+    <p th:if="${similarusererror != null}" th:text="${similarusererror.error}"></p>
+    <div>
+      <label>Choose your name:</label>
+      <input type="text" name="username"/>
+      <input type="submit" value="Enter"/>
+    </div>
   </form>
 </section>
 </body>
