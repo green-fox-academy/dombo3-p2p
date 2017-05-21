@@ -18,6 +18,16 @@
       <input type="submit" value="update"/>
     </div>
   </form>
+  <ul th:if="${messages != null}" th:each="message : ${messages}">
+    <li th:if="${message.user != null}" th:text="${message.user.username}"></li>
+    <p th:if="${message.text != null}" th:text="${message.text}"></p>
+  </ul>
+  <form th:action="@{/send}" method="post">
+    <div>
+      ​<textarea name="message" rows="4" cols="30"></textarea>
+      <input type="submit" value="Send"/>
+    </div>
+  </form>
 </section>
 </body>
 </html>

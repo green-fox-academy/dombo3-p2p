@@ -4,12 +4,14 @@ import com.greenfox.exceptions.SimilarUserException;
 import com.greenfox.exceptions.SimilarUserExceptionMessage;
 import com.greenfox.exceptions.UsernameException;
 import com.greenfox.exceptions.UsernameExceptionMessage;
-import com.greenfox.model.Log;
+import com.greenfox.model.Message;
 import com.greenfox.model.User;
 import com.greenfox.repository.LogRepo;
+import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
 import com.greenfox.services.UserService;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,12 +30,14 @@ public class MainController {
   LogRepo logRepo;
   UserRepo userRepo;
   UserService userService;
+  MessageRepo messageRepo;
 
   @Autowired
-  public MainController(LogRepo logRepo, UserRepo userRepo, UserService userService) {
+  public MainController(LogRepo logRepo, UserRepo userRepo, UserService userService, MessageRepo messageRepo) {
     this.logRepo = logRepo;
     this.userRepo = userRepo;
     this.userService = userService;
+    this.messageRepo = messageRepo;
   }
 
   public final String CHAT_APP_UNIQUE_ID = "dombo3";
@@ -98,6 +102,15 @@ public class MainController {
       userService.getCurrentUser().setUsername(username); //update for the View
 //    }
     return "redirect:/";
+  }
+
+  @PostMapping("/send")
+  public String send(Model model, @RequestParam("message") String message) {
+    Message newMessage = new Message(userService.getCurrentUser(), message);
+    messageRepo.save(newMessage);
+    Iterable<Message> messages = messageRepo.findAll();
+    model.addAttribute("messages", messages);
+    return "index";
   }
 
   @ModelAttribute
