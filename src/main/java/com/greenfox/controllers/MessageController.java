@@ -1,6 +1,6 @@
 package com.greenfox.controllers;
 
-import com.greenfox.model.Recieve;
+import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Response;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
@@ -26,17 +26,17 @@ public class MessageController {
 
   @PostMapping("/api/message/recieve")
   @CrossOrigin("*")
-  public Response recieveMessage(@RequestBody Recieve recieve) {
+  public Response receiveMessage(@RequestBody ClientMessage clientMessage) {
 
-    recieve.getClient();
+    clientMessage.getClient();
 
     String message = "";
-    for (String error : messageValidator.validateMessage(recieve)) {
+    for (String error : messageValidator.validateMessage(clientMessage)) {
       message += error;
     }
 
     if (message.equals("")) {
-      messageRepo.save(recieve.getMessage());
+      messageRepo.save(clientMessage.getMessage());
       return new Response("ok",null);
     } else {
       return new Response("error", "Missing field(s): " + message);

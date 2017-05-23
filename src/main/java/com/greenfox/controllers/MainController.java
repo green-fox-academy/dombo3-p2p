@@ -4,8 +4,11 @@ import com.greenfox.exceptions.SimilarUserException;
 import com.greenfox.exceptions.SimilarUserExceptionMessage;
 import com.greenfox.exceptions.UsernameException;
 import com.greenfox.exceptions.UsernameExceptionMessage;
+import com.greenfox.model.Client;
+import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Log;
 import com.greenfox.model.Message;
+import com.greenfox.model.Response;
 import com.greenfox.model.User;
 import com.greenfox.repository.LogRepo;
 import com.greenfox.repository.MessageRepo;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
 public class MainController {
@@ -120,9 +124,14 @@ public class MainController {
   public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
 
     Message newMessage = new Message(userService.getCurrentUser().getUsername(), message);
+
     messageRepo.save(newMessage);
     Iterable<Message> messages = messageRepo.findAllByOrderByTimestampAsc();
     model.addAttribute("messages", messages);
+
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.postForObject("https://secret-citadel-37081.herokuapp.com/api/message/receive",new ClientMessage(newMessage, new Client(CHAT_APP_UNIQUE_ID)),Response.class);
+
     createLog(request,"INFO");
     return "index";
   }

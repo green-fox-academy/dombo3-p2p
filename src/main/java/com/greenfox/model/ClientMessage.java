@@ -1,12 +1,12 @@
 package com.greenfox.model;
 
-public class Recieve {
+public class ClientMessage {
   private Message message;
   private Client client;
 
-  public Recieve() {};
+  public ClientMessage() {};
 
-  public Recieve(Message message, Client client) {
+  public ClientMessage(Message message, Client client) {
     this.message = message;
     this.client = client;
   }
