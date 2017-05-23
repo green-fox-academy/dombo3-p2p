@@ -130,7 +130,7 @@ public class MainController {
     model.addAttribute("messages", messages);
 
     RestTemplate restTemplate = new RestTemplate();
-    restTemplate.postForObject("https://secret-citadel-37081.herokuapp.com/api/message/receive",new ClientMessage(newMessage, new Client(CHAT_APP_UNIQUE_ID)),Response.class);
+    restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",new ClientMessage(newMessage, new Client(CHAT_APP_UNIQUE_ID)),Response.class);
 
     createLog(request,"INFO");
     return "index";
