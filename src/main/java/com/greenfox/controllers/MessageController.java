@@ -37,7 +37,7 @@ public class MessageController {
       errormessage += error;
     }
 
-    if (errormessage.equals("")) {
+    if (errormessage.equals("") || clientMessage.getClient().getId()!="dombo3") {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
       restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",clientMessage,Response.class);
