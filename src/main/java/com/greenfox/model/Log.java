@@ -60,7 +60,7 @@ public class Log {
 
   @Override
   public String toString() {
-    return timestamp + " " + loglevel + " " + "Request" + path + " " + method;
+    return timestamp + " " + loglevel + " " + "Request: " + path + " " + method + " " + getRequestParamKey() + "=" + getRequestParamValue();
   }
 
 }

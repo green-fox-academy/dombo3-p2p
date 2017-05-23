@@ -1,5 +1,6 @@
 package com.greenfox.model;
 import java.sql.Timestamp;
+import java.util.Random;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,7 +11,6 @@ import javax.persistence.ManyToOne;
 public class Message {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
   @ManyToOne
@@ -24,12 +24,14 @@ public class Message {
     this.user = user;
     this.text = text;
     this.timestamp = new Timestamp(System.currentTimeMillis());
+    this.id = 1000000 + (long)(Math.random() * 1000000);
   }
 
   public Message(User user, String text, Timestamp timestamp) {
     this.user = user;
     this.text = text;
     this.timestamp = timestamp;
+    this.id = 1000000 + (long)(Math.random() * 1000000);
   }
 
   public long getId() {
@@ -44,7 +46,8 @@ public class Message {
     return user;
   }
 
-  public void setUser(User user) {
+  public void setUser(User user)
+  {
     this.user = user;
   }
 

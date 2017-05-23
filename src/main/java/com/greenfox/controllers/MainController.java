@@ -4,14 +4,13 @@ import com.greenfox.exceptions.SimilarUserException;
 import com.greenfox.exceptions.SimilarUserExceptionMessage;
 import com.greenfox.exceptions.UsernameException;
 import com.greenfox.exceptions.UsernameExceptionMessage;
+import com.greenfox.model.Log;
 import com.greenfox.model.Message;
 import com.greenfox.model.User;
 import com.greenfox.repository.LogRepo;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
 import com.greenfox.services.UserService;
-import java.util.List;
-import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,6 +31,9 @@ public class MainController {
   UserService userService;
   MessageRepo messageRepo;
 
+  public final String CHAT_APP_UNIQUE_ID = "dombo3";
+  public final String CHAT_APP_PEER_ADDRESS = "192.168.0.15";
+
   @Autowired
   public MainController(LogRepo logRepo, UserRepo userRepo, UserService userService, MessageRepo messageRepo) {
     this.logRepo = logRepo;
@@ -40,17 +42,19 @@ public class MainController {
     this.messageRepo = messageRepo;
   }
 
-  public final String CHAT_APP_UNIQUE_ID = "dombo3";
-  public final String CHAT_APP_PEER_ADDRESS = "192.168.0.15";
-
   @RequestMapping("/")
-  public String main(HttpServletRequest request) {
+  public String main(HttpServletRequest request, Model model) {
 //    if (System.getenv("CHAT_APP_LOGLEVEL").equals("ERROR")) {
 //      System.err.println("Error");
 //    } else {
 //      Log log = new Log(request,"INFO");
 //      logRepo.save(log);
 //    }
+
+    createLog(request,"INFO");
+
+    Iterable<Message> messages = messageRepo.findAll();
+    model.addAttribute("messages", messages);
 
     if (userService.getCurrentUser() == null) {
       return "enter";
@@ -62,12 +66,15 @@ public class MainController {
   }
 
   @GetMapping("/enter")
-  public String enter() {
+  public String enter(HttpServletRequest request) {
+    createLog(request,"INFO");
     return "enter";
   }
 
   @PostMapping("/enter")
-  public String saveUser(@RequestParam(value = "username") String username) throws Exception {
+  public String saveUser(HttpServletRequest request,
+      @RequestParam(value = "username") String username) throws Exception {
+
     if (username.equals("")) { //if input field is empty
       throw new UsernameException();
     } else if (userRepo.count() == 0) { //if database is empty, create user
@@ -88,29 +95,42 @@ public class MainController {
         }
       }
     }
+
+    createLog(request,"INFO");
     return "redirect:/";
   }
 
   @PostMapping("/update/{id}")
-  public String update(@PathVariable long id, @RequestParam("username") String username) throws Exception {
-//    if (username.equals("")) {                //if input field is empty
-//      throw new UsernameException();
-//    } else {                                // CAnnot handle return in Exception
+  public String update(HttpServletRequest request,
+      @PathVariable long id, @RequestParam("username") String username) throws Exception {
+    if (username.equals("")) {                //if input field is empty
+      throw new UsernameException();
+    } else {
       User user = userRepo.findOne(id); //update in the Database;
       user.setUsername(username);
       userRepo.save(user);
       userService.getCurrentUser().setUsername(username); //update for the View
-//    }
+    }
+
+    createLog(request,"INFO");
     return "redirect:/";
   }
 
   @PostMapping("/send")
-  public String send(Model model, @RequestParam("message") String message) {
+  public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
+
     Message newMessage = new Message(userService.getCurrentUser(), message);
     messageRepo.save(newMessage);
     Iterable<Message> messages = messageRepo.findAll();
     model.addAttribute("messages", messages);
+    createLog(request,"INFO");
     return "index";
+  }
+
+  public void createLog(HttpServletRequest request, String loglevel) {
+    Log log = new Log(request, loglevel); // logging
+    System.out.println(log);
+    logRepo.save(log);
   }
 
   @ModelAttribute
@@ -120,19 +140,30 @@ public class MainController {
 
 
   @ExceptionHandler(UsernameException.class)
-  public String UsernameException(Model model) {
+  public String UsernameException(HttpServletRequest request, Model model) {
+
+    createLog(request,"ERROR");
+
     UsernameExceptionMessage error = new UsernameExceptionMessage("The username field is empty");
-    // This should be a new Error Log, that is printed out and saved to the log database
-    System.out.println(error.getError()); //log ERROR
+    System.out.println(error.getError());
     model.addAttribute("usernameerror",error);
+    model.addAttribute("user", userService.getCurrentUser());
+
+    if (request.getServletPath().startsWith("/update")) {
+      return "index";
+    }
     return "enter";
   }
 
   @ExceptionHandler(SimilarUserException.class)
-  public String SimilarUserException(Model model) {
+  public String SimilarUserException(HttpServletRequest request, Model model) {
+
+    createLog(request,"ERROR");
+
     SimilarUserExceptionMessage error = new SimilarUserExceptionMessage("There is a similar user in the database, please find another one");
-    System.out.println(error.getError()); //log ERROR
+    System.out.println(error.getError());
     model.addAttribute("similarusererror", error);
+
     return "enter";
   }
 }
