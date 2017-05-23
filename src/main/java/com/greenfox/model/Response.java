@@ -1,7 +1,11 @@
 package com.greenfox.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class Response {
   private String status;
+  @JsonInclude(Include.NON_NULL)
   private String message;
 
   public Response() {};
@@ -26,4 +30,5 @@ public class Response {
   public void setMessage(String message) {
     this.message = message;
   }
+
 }
