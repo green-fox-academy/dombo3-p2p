@@ -1,5 +1,6 @@
 package com.greenfox.controllers;
 
+import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Response;
 import com.greenfox.repository.MessageRepo;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 
 @RestController
@@ -37,6 +39,8 @@ public class MessageController {
 
     if (message.equals("")) {
       messageRepo.save(clientMessage.getMessage());
+      RestTemplate restTemplate = new RestTemplate();
+      restTemplate.postForObject("https://secret-citadel-37081.herokuapp.com/api/message/receive",clientMessage,Response.class);
       return new Response("ok",null);
     } else {
       return new Response("error", "Missing field(s): " + message);
