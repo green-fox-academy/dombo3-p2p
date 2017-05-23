@@ -26,24 +26,24 @@ public class MessageController {
     this.userRepo = userRepo;
   }
 
-  @PostMapping("/api/message/recieve")
+  @PostMapping("/api/message/receive")
   @CrossOrigin("*")
   public Response receiveMessage(@RequestBody ClientMessage clientMessage) {
 
     clientMessage.getClient();
 
-    String message = "";
+    String errormessage = "";
     for (String error : messageValidator.validateMessage(clientMessage)) {
-      message += error;
+      errormessage += error;
     }
 
-    if (message.equals("")) {
+    if (errormessage.equals("")) {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
       restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",clientMessage,Response.class);
       return new Response("ok",null);
     } else {
-      return new Response("error", "Missing field(s): " + message);
+      return new Response("error", "Missing field(s): " + errormessage);
     }
   }
 }
