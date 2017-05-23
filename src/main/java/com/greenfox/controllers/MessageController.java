@@ -40,7 +40,7 @@ public class MessageController {
     if (errormessage.equals("") || clientMessage.getClient().getId()!="dombo3") {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
-      restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",clientMessage,Response.class);
+      restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",clientMessage,Object.class);
       return new Response("ok",null);
     } else {
       return new Response("error", "Missing field(s): " + errormessage);
