@@ -9,7 +9,7 @@ import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Log;
 import com.greenfox.model.Message;
 import com.greenfox.model.Response;
-import com.greenfox.model.User;
+import com.greenfox.model.Users;
 import com.greenfox.repository.LogRepo;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
@@ -60,10 +60,10 @@ public class MainController {
     Iterable<Message> messages = messageRepo.findAll();
     model.addAttribute("messages", messages);
 
-    if (userService.getCurrentUser() == null) {
+    if (userService.getCurrentUsers() == null) {
       return "enter";
     } else {
-      System.out.println(userService.getCurrentUser().getUsername());
+      System.out.println(userService.getCurrentUsers().getUsername());
       return "index";
     }
 
@@ -81,20 +81,20 @@ public class MainController {
 
     if (username.equals("")) { //if input field is empty
       throw new UsernameException();
-    } else if (userRepo.count() == 0) { //if database is empty, create user
-      System.out.println("Empty database case, create new user"); //log INFO
-      User user = new User(username);   //Sad code, code duplicate because: cannot get into for cycle in empty database
-      userService.setCurrentUser(user);
-      userRepo.save(user);
+    } else if (userRepo.count() == 0) { //if database is empty, create users
+      System.out.println("Empty database case, create new users"); //log INFO
+      Users users = new Users(username);   //Sad code, code duplicate because: cannot get into for cycle in empty database
+      userService.setCurrentUsers(users);
+      userRepo.save(users);
     } else {
-      for (User user : userRepo.findAll()) { //if find similar username
-        if (user.getUsername().equals(username)) {
+      for (Users users : userRepo.findAll()) { //if find similar username
+        if (users.getUsername().equals(username)) {
           System.out.println("EXCEPTION Find a similar username, please find another one"); //log ERROR
           throw new SimilarUserException();
         } else {
-          System.out.println("Good choice Created a new user"); //log INFO
-          User newuser = new User(username);
-          userService.setCurrentUser(user);
+          System.out.println("Good choice Created a new users"); //log INFO
+          Users newuser = new Users(username);
+          userService.setCurrentUsers(users);
           userRepo.save(newuser);
         }
       }
@@ -110,10 +110,10 @@ public class MainController {
     if (username.equals("")) {                //if input field is empty
       throw new UsernameException();
     } else {
-      User user = userRepo.findOne(id); //update in the Database;
-      user.setUsername(username);
-      userRepo.save(user);
-      userService.getCurrentUser().setUsername(username); //update for the View
+      Users users = userRepo.findOne(id); //update in the Database;
+      users.setUsername(username);
+      userRepo.save(users);
+      userService.getCurrentUsers().setUsername(username); //update for the View
     }
 
     createLog(request,"INFO");
@@ -123,7 +123,7 @@ public class MainController {
   @PostMapping("/send")
   public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
 
-    Message newMessage = new Message(userService.getCurrentUser().getUsername(), message);
+    Message newMessage = new Message(userService.getCurrentUsers().getUsername(), message);
 
     messageRepo.save(newMessage);
     Iterable<Message> messages = messageRepo.findAllByOrderByTimestampAsc();
@@ -144,7 +144,7 @@ public class MainController {
 
   @ModelAttribute
   public void add(Model model) {
-    model.addAttribute("user", userService.getCurrentUser());
+    model.addAttribute("user", userService.getCurrentUsers());
   }
 
 
@@ -156,7 +156,7 @@ public class MainController {
     UsernameExceptionMessage error = new UsernameExceptionMessage("The username field is empty");
     System.out.println(error.getError());
     model.addAttribute("usernameerror",error);
-    model.addAttribute("user", userService.getCurrentUser());
+    model.addAttribute("user", userService.getCurrentUsers());
 
     if (request.getServletPath().startsWith("/update")) {
       return "index";

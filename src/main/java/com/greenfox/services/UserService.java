@@ -1,17 +1,17 @@
 package com.greenfox.services;
 
-import com.greenfox.model.User;
+import com.greenfox.model.Users;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-  private User currentUser;
+  private Users currentUsers;
 
-  public User getCurrentUser() {
-    return currentUser;
+  public Users getCurrentUsers() {
+    return currentUsers;
   }
 
-  public void setCurrentUser(User currentUser) {
-    this.currentUser = currentUser;
+  public void setCurrentUsers(Users currentUsers) {
+    this.currentUsers = currentUsers;
   }
 }
