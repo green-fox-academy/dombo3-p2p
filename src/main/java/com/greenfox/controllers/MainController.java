@@ -144,7 +144,7 @@ public class MainController {
 
   @ModelAttribute
   public void add(Model model) {
-    model.addAttribute("user", userService.getCurrentAccount());
+    model.addAttribute("account", userService.getCurrentAccount());
   }
 
 
@@ -156,7 +156,7 @@ public class MainController {
     UsernameExceptionMessage error = new UsernameExceptionMessage("The username field is empty");
     System.out.println(error.getError());
     model.addAttribute("usernameerror",error);
-    model.addAttribute("user", userService.getCurrentAccount());
+    model.addAttribute("account", userService.getCurrentAccount());
 
     if (request.getServletPath().startsWith("/update")) {
       return "index";
