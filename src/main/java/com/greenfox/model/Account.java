@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-public class Users {
+public class Account {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,10 +17,10 @@ public class Users {
 //  @OneToMany(mappedBy = "user")
 //  public Set<Message> messages;
 
-  public Users() {
+  public Account() {
   }
 
-  public Users(String username) {
+  public Account(String username) {
     this.username = username;
   }
 

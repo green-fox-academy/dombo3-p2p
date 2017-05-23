@@ -4,12 +4,12 @@ import com.greenfox.exceptions.SimilarUserException;
 import com.greenfox.exceptions.SimilarUserExceptionMessage;
 import com.greenfox.exceptions.UsernameException;
 import com.greenfox.exceptions.UsernameExceptionMessage;
+import com.greenfox.model.Account;
 import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Log;
 import com.greenfox.model.Message;
 import com.greenfox.model.Response;
-import com.greenfox.model.Users;
 import com.greenfox.repository.LogRepo;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
@@ -60,10 +60,10 @@ public class MainController {
     Iterable<Message> messages = messageRepo.findAll();
     model.addAttribute("messages", messages);
 
-    if (userService.getCurrentUsers() == null) {
+    if (userService.getCurrentAccount() == null) {
       return "enter";
     } else {
-      System.out.println(userService.getCurrentUsers().getUsername());
+      System.out.println(userService.getCurrentAccount().getUsername());
       return "index";
     }
 
@@ -81,20 +81,20 @@ public class MainController {
 
     if (username.equals("")) { //if input field is empty
       throw new UsernameException();
-    } else if (userRepo.count() == 0) { //if database is empty, create users
-      System.out.println("Empty database case, create new users"); //log INFO
-      Users users = new Users(username);   //Sad code, code duplicate because: cannot get into for cycle in empty database
-      userService.setCurrentUsers(users);
-      userRepo.save(users);
+    } else if (userRepo.count() == 0) { //if database is empty, create account
+      System.out.println("Empty database case, create new account"); //log INFO
+      Account account = new Account(username);   //Sad code, code duplicate because: cannot get into for cycle in empty database
+      userService.setCurrentAccount(account);
+      userRepo.save(account);
     } else {
-      for (Users users : userRepo.findAll()) { //if find similar username
-        if (users.getUsername().equals(username)) {
+      for (Account account : userRepo.findAll()) { //if find similar username
+        if (account.getUsername().equals(username)) {
           System.out.println("EXCEPTION Find a similar username, please find another one"); //log ERROR
           throw new SimilarUserException();
         } else {
-          System.out.println("Good choice Created a new users"); //log INFO
-          Users newuser = new Users(username);
-          userService.setCurrentUsers(users);
+          System.out.println("Good choice Created a new account"); //log INFO
+          Account newuser = new Account(username);
+          userService.setCurrentAccount(account);
           userRepo.save(newuser);
         }
       }
@@ -110,10 +110,10 @@ public class MainController {
     if (username.equals("")) {                //if input field is empty
       throw new UsernameException();
     } else {
-      Users users = userRepo.findOne(id); //update in the Database;
-      users.setUsername(username);
-      userRepo.save(users);
-      userService.getCurrentUsers().setUsername(username); //update for the View
+      Account account = userRepo.findOne(id); //update in the Database;
+      account.setUsername(username);
+      userRepo.save(account);
+      userService.getCurrentAccount().setUsername(username); //update for the View
     }
 
     createLog(request,"INFO");
@@ -123,7 +123,7 @@ public class MainController {
   @PostMapping("/send")
   public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
 
-    Message newMessage = new Message(userService.getCurrentUsers().getUsername(), message);
+    Message newMessage = new Message(userService.getCurrentAccount().getUsername(), message);
 
     messageRepo.save(newMessage);
     Iterable<Message> messages = messageRepo.findAllByOrderByTimestampAsc();
@@ -144,7 +144,7 @@ public class MainController {
 
   @ModelAttribute
   public void add(Model model) {
-    model.addAttribute("user", userService.getCurrentUsers());
+    model.addAttribute("user", userService.getCurrentAccount());
   }
 
 
@@ -156,7 +156,7 @@ public class MainController {
     UsernameExceptionMessage error = new UsernameExceptionMessage("The username field is empty");
     System.out.println(error.getError());
     model.addAttribute("usernameerror",error);
-    model.addAttribute("user", userService.getCurrentUsers());
+    model.addAttribute("user", userService.getCurrentAccount());
 
     if (request.getServletPath().startsWith("/update")) {
       return "index";
