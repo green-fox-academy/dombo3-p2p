@@ -15,8 +15,8 @@ public class User {
   private Long id;
   private String username;
 
-  @OneToMany(mappedBy = "user")
-  public Set<Message> messages;
+//  @OneToMany(mappedBy = "user")
+//  public Set<Message> messages;
 
   public User() {
   }

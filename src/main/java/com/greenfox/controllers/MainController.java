@@ -119,9 +119,9 @@ public class MainController {
   @PostMapping("/send")
   public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
 
-    Message newMessage = new Message(userService.getCurrentUser(), message);
+    Message newMessage = new Message(userService.getCurrentUser().getUsername(), message);
     messageRepo.save(newMessage);
-    Iterable<Message> messages = messageRepo.findAll();
+    Iterable<Message> messages = messageRepo.findAllByOrderByTimestampAsc();
     model.addAttribute("messages", messages);
     createLog(request,"INFO");
     return "index";

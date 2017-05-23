@@ -19,7 +19,7 @@
     </div>
   </form>
   <ul th:if="${messages != null}" th:each="message : ${messages}">
-    <li th:if="${message.user != null}" th:text="${message.user.username}"></li>
+    <li th:if="${message.username != null}" th:text="${message.username}"></li>
     <p th:if="${message.text != null}" th:text="${message.text}"></p>
   </ul>
   <form th:action="@{/send}" method="post">
