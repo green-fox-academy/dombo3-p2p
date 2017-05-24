@@ -40,7 +40,7 @@ public class MessageController {
 
     if (clientMessage.getClient().getId().equals(MessageService.CHAT_APP_UNIQUE_ID)) {
       System.out.println("Got my own message");
-      return new Response("error", "Thanks for my own message");
+      return new Response("ok", "Thanks for my own message");
     } else if (errormessage.equals("")) {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
