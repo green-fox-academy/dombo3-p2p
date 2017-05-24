@@ -38,7 +38,7 @@ public class MessageController {
       System.out.println(error);
     }
 
-    if (!clientMessage.getClient().getId().equals(MessageService.CHAT_APP_UNIQUE_ID)) {
+    if (clientMessage.getClient().getId().equals(MessageService.CHAT_APP_UNIQUE_ID)) {
       System.out.println("Got my own message");
       return new Response("error", "Thanks for my own message");
     } else if (errormessage.equals("")) {
