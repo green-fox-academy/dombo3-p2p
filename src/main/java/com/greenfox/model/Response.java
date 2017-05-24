@@ -2,7 +2,6 @@ package com.greenfox.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sun.istack.internal.Nullable;
 
 public class Response {
   private String status;
