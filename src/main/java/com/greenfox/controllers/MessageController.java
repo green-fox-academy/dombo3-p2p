@@ -31,9 +31,13 @@ public class MessageController {
 
     clientMessage.getClient();
 
+
+
     String errormessage = "";
     for (String error : messageService.validateMessage(clientMessage)) {
+      System.out.println(clientMessage.getMessage().getText());
       errormessage += error;
+      System.out.println(error);
     }
 
     if (errormessage.equals("") || clientMessage.getClient().getId()!=MessageService.CHAT_APP_UNIQUE_ID) {
