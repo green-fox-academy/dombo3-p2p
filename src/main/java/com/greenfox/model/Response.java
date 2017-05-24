@@ -6,7 +6,6 @@ import com.sun.istack.internal.Nullable;
 
 public class Response {
   private String status;
-  @Nullable
   @JsonInclude(Include.NON_NULL)
   private String message;
 

@@ -33,14 +33,19 @@ public class MessageController {
 
     String errormessage = "";
     for (String error : messageService.validateMessage(clientMessage)) {
+      System.out.println(clientMessage.getMessage().getText());
       errormessage += error;
+      System.out.println(error);
     }
 
-    if (errormessage.equals("") || clientMessage.getClient().getId()!=MessageService.CHAT_APP_UNIQUE_ID) {
+    if (!clientMessage.getClient().getId().equals(MessageService.CHAT_APP_UNIQUE_ID)) {
+      System.out.println("Got my own message");
+      return new Response("error", "Thanks for my own message");
+    } else if (errormessage.equals("")) {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
-      restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESSS,clientMessage,Response.class);
-      return new Response("ok",null);
+      restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESSS, clientMessage, Response.class);
+      return new Response("ok", null);
     } else {
       return new Response("error", "Missing field(s): " + errormessage);
     }

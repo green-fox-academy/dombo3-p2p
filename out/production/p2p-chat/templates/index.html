@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<section layout:fragment="content">
+  <h1>Peer to Peer Chat program</h1>
+  <p th:text="|logged in as ${account.username}|"></p>
+  <p th:if="${usernameerror != null}" th:text="${usernameerror.error}"></p>
+  <form action="#" th:action="@{/update/{id}(id=${account.id})}" method="post">
+    <div>
+      <label>Your username:</label>
+      <input type="text" name="username" th:placeholder="${account.username}"/>
+      <input type="submit" value="update"/>
+    </div>
+  </form>
+  <ul th:if="${messages != null}" th:each="message : ${messages}">
+    <li th:if="${message.username != null}" th:text="${message.username}"></li>
+    <p th:if="${message.text != null}" th:text="${message.text}"></p>
+  </ul>
+  <form th:action="@{/send}" method="post">
+    <div>
+      ​<textarea name="message" rows="4" cols="30"></textarea>
+      <input type="submit" value="Send"/>
+    </div>
+  </form>
+  <a href="/">REFRESH</a>
+</section>
+</body>
+</html>
