@@ -6,7 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MessageValidator {
+public class MessageService {
+
+  public static String CHAT_APP_UNIQUE_ID = System.getenv("CHAT_APP_UNIQUE_ID");
+  public static String CHAT_APP_PEER_ADDRESSS = System.getenv("CHAT_APP_PEER_ADDRESSS");
 
   public List<String> validateMessage(ClientMessage clientMessage) {
     List<String> errors = new ArrayList<>();
@@ -34,5 +37,4 @@ public class MessageValidator {
 
     return errors;
   }
-
 }

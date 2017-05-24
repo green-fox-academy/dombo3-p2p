@@ -13,6 +13,7 @@ import com.greenfox.model.Response;
 import com.greenfox.repository.LogRepo;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
+import com.greenfox.services.MessageService;
 import com.greenfox.services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,6 @@ public class MainController {
   UserService userService;
   MessageRepo messageRepo;
 
-  public final String CHAT_APP_UNIQUE_ID = "dombo3";
-  public final String CHAT_APP_PEER_ADDRESS = "192.168.0.15";
-
   @Autowired
   public MainController(LogRepo logRepo, UserRepo userRepo, UserService userService, MessageRepo messageRepo) {
     this.logRepo = logRepo;
@@ -48,12 +46,6 @@ public class MainController {
 
   @RequestMapping("/")
   public String main(HttpServletRequest request, Model model) {
-//    if (System.getenv("CHAT_APP_LOGLEVEL").equals("ERROR")) {
-//      System.err.println("Error");
-//    } else {
-//      Log log = new Log(request,"INFO");
-//      logRepo.save(log);
-//    }
 
     createLog(request,"INFO");
 
@@ -66,7 +58,6 @@ public class MainController {
       System.out.println(userService.getCurrentAccount().getUsername());
       return "index";
     }
-
   }
 
   @GetMapping("/enter")
@@ -130,7 +121,7 @@ public class MainController {
     model.addAttribute("messages", messages);
 
     RestTemplate restTemplate = new RestTemplate();
-    restTemplate.postForObject("https://stegmarb-peertopeer.herokuapp.com/api/message/receive",new ClientMessage(newMessage, new Client(CHAT_APP_UNIQUE_ID)),Response.class);
+    restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESSS,new ClientMessage(newMessage, new Client(MessageService.CHAT_APP_UNIQUE_ID)),Response.class);
 
     createLog(request,"INFO");
     return "index";
