@@ -7,7 +7,7 @@ import org.springframework.format.datetime.joda.ReadablePartialPrinter;
 public class Response {
   private String status;
   @JsonInclude(Include.NON_NULL)
-  private String message;
+  private String message = null;
 
   public Response() {};
 
