@@ -5,7 +5,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+import com.google.gson.Gson;
 import com.greenfox.P2pApplication;
+import com.greenfox.model.Client;
+import com.greenfox.model.ClientMessage;
+import com.greenfox.model.Message;
+import com.greenfox.model.Response;
+import java.sql.Timestamp;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +42,22 @@ public class MessageControllerTest {
 
   @Test
   public void ReceiveValidatedMessage() throws Exception {
-    String json = "{ "
-        + "message: { id: 7655482,"
-        + " username: EggDice,"
-        + " text: How you doin?,"
-        + " timestamp: 1322018752992},"
-        + " client: { id: EggDice}";
-    mockMvc.perform(post("/api/message/recieve").contentType(MediaType.APPLICATION_JSON).content(json))
+    String text = "Hello";
+    long id = 1000000 + (long)(Math.random() * 1000000);
+    String username = "steg";
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+    Client client = new Client("steg");
+    Message message = new Message(username,text,timestamp);
+    ClientMessage clientMessage = new ClientMessage(message,client);
+
+    Gson gson = new Gson();
+    String json = gson.toJson(clientMessage);
+
+    mockMvc.perform(post("/api/message/receive").contentType(MediaType.APPLICATION_JSON).content(
+        "{ \"message\": {\"id\": 7655482,\"username\": \"EggDice\",\"text\": \"How you doin'?\",\"timestamp\": 1322018752992},\"client\": {\"id\": \"EggDice\"}}"
+    ))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("ok"));
   }
-
 }
