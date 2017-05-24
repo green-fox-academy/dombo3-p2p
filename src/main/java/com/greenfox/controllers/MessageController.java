@@ -44,7 +44,7 @@ public class MessageController {
     } else if (errormessage.equals("")) {
       messageRepo.save(clientMessage.getMessage());
       RestTemplate restTemplate = new RestTemplate();
-      restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESSS, clientMessage, Response.class);
+      restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESS, clientMessage, Response.class);
       return new Response("ok", null);
     } else {
       return new Response("error", "Missing field(s): " + errormessage);

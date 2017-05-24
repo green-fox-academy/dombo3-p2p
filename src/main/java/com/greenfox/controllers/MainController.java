@@ -47,6 +47,8 @@ public class MainController {
   @RequestMapping("/")
   public String main(HttpServletRequest request, Model model) {
 
+    System.out.println(System.getenv("CHAT_APP_PEER_ADDRESS"));
+
     createLog(request,"INFO");
 
     Iterable<Message> messages = messageRepo.findAll();
@@ -121,7 +123,7 @@ public class MainController {
     model.addAttribute("messages", messages);
 
     RestTemplate restTemplate = new RestTemplate();
-    restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESSS,new ClientMessage(newMessage, new Client(MessageService.CHAT_APP_UNIQUE_ID)),Response.class);
+    restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESS,new ClientMessage(newMessage, new Client(MessageService.CHAT_APP_UNIQUE_ID)),Response.class);
 
     createLog(request,"INFO");
     return "index";

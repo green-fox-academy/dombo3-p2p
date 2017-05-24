@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class MessageService {
 
   public static String CHAT_APP_UNIQUE_ID = System.getenv("CHAT_APP_UNIQUE_ID");
-  public static String CHAT_APP_PEER_ADDRESSS = System.getenv("CHAT_APP_PEER_ADDRESSS");
+  public static String CHAT_APP_PEER_ADDRESS = System.getenv("CHAT_APP_PEER_ADDRESS");
 
   public List<String> validateMessage(ClientMessage clientMessage) {
     List<String> errors = new ArrayList<>();

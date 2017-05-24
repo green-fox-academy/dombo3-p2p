@@ -10,8 +10,6 @@ import com.greenfox.P2pApplication;
 import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Message;
-import com.greenfox.model.Response;
-import java.sql.Timestamp;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,19 +43,18 @@ public class MessageControllerTest {
     String text = "Hello";
     long id = 1000000 + (long)(Math.random() * 1000000);
     String username = "steg";
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
     Client client = new Client("steg");
-    Message message = new Message(username,text,timestamp);
+    Message message = new Message(username,text);
     ClientMessage clientMessage = new ClientMessage(message,client);
 
     Gson gson = new Gson();
     String json = gson.toJson(clientMessage);
 
+    System.out.println(json);
     mockMvc.perform(post("/api/message/receive").contentType(MediaType.APPLICATION_JSON).content(
         "{ \"message\": {\"id\": 7655482,\"username\": \"EggDice\",\"text\": \"How you doin'?\",\"timestamp\": 1322018752992},\"client\": {\"id\": \"EggDice\"}}"
-    ))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.status").value("ok"));
+//          json
+    )).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("ok"));
   }
 }
