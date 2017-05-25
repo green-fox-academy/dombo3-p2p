@@ -7,7 +7,6 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
 <section layout:fragment="content">
   <h1>Test Auto Deploy</h1>
   <h1>Peer to Peer Chat program</h1>
@@ -35,11 +34,11 @@
 <script>
   $("#input").keypress(function (e) {
     console.log( "Handler for .keypress() called." );
-    if (e.which == 13) {
-      alert("Bazzeee");
-      $('#sendmessage').submit();
-      event.preventDefault();
-    }
+//    if (e.which == 13) {
+//      alert("Bazzeee");
+//      $('#sendmessage').submit();
+//      event.preventDefault();
+//    }
   });
 </script>
 </body>
