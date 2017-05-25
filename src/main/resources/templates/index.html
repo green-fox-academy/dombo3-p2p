@@ -33,7 +33,7 @@
   <a href="/">REFRESH</a>
 </section>
 <script>
-  $('.input').keypress(function (e) {
+  $('textarea').keypress(function (e) {
     if (e.which == 13) {
       $('form#sendmessage').submit();
       event.preventDefault();
