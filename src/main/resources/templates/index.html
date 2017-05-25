@@ -23,7 +23,7 @@
     <li th:if="${message.username != null}" th:text="${message.username}"></li>
     <p th:if="${message.text != null}" th:text="${message.text}"></p>
   </ul>
-  <form th:action="@{/send}" method="post">
+  <form th:action="@{/send}" method="post" id="sendmessage">
     <div>
       ​<textarea name="message" rows="4" cols="30"></textarea>
       <input type="submit" value="Send"/>
@@ -31,5 +31,13 @@
   </form>
   <a href="/">REFRESH</a>
 </section>
+<script>
+  $('.input').keypress(function (e) {
+    if (e.which == 13) {
+      $('form#sendmessage').submit();
+      return false;    //<---- Add this line
+    }
+  });
+</script>
 </body>
 </html>

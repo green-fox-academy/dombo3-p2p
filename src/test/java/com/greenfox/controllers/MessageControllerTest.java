@@ -1,5 +1,6 @@
 package com.greenfox.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,6 +13,8 @@ import com.greenfox.P2pApplication;
 import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
 import com.greenfox.model.Message;
+import com.greenfox.repository.MessageRepo;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +35,8 @@ public class MessageControllerTest {
 
   private MockMvc mockMvc;
 
+  @Autowired
+  private MessageRepo messageRepo;
   @Autowired
   private WebApplicationContext webApplicationContext;
 
@@ -68,6 +73,23 @@ public class MessageControllerTest {
         .content(jsonInput))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("error"))
-        .andExpect(jsonPath("$.message").value("valami"));
+        .andExpect(jsonPath("$.message").value("Missing field(s): message.text, "));
+  }
+
+  @Test
+  public void MessageRepoTest() throws Exception {
+    Client client = new Client("zspadar");
+    Message message = new Message("Peterke","");
+    ClientMessage clientMessage = new ClientMessage(message, client);
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonInput = mapper.writeValueAsString(clientMessage);
+
+    mockMvc.perform(post("/api/message/receive")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(jsonInput));
+
+    Iterable<Message> messages = messageRepo.findAll();
+    Message firstMessage = Lists.newArrayList(messages).get(0);
+    assertThat(firstMessage.getText()).isEqualTo("Dombo3 message from mock test");
   }
 }
