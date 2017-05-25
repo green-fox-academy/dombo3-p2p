@@ -5,9 +5,11 @@
       layout:decorator="template">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+  <script src="p2p.js"></script>
 </head>
 <body>
-<script src="/webjars/jquery/1.11.1/jquery.min.js"></script>
+
 <section layout:fragment="content">
   <h1>Test Auto Deploy</h1>
   <h1>Peer to Peer Chat program</h1>
@@ -32,15 +34,5 @@
   </form>
   <a href="/">REFRESH</a>
 </section>
-<script>
-  $("#input").keypress(function (e) {
-    console.log( "Handler for .keypress() called." );
-//    if (e.which == 13) {
-//      alert("Bazzeee");
-//      $('#sendmessage').submit();
-//      event.preventDefault();
-//    }
-  });
-</script>
 </body>
 </html>
