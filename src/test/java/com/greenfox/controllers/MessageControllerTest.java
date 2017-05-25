@@ -5,7 +5,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.greenfox.P2pApplication;
 import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
@@ -40,21 +42,32 @@ public class MessageControllerTest {
 
   @Test
   public void ReceiveValidatedMessage() throws Exception {
-    String text = "Hello";
-    long id = 1000000 + (long)(Math.random() * 1000000);
-    String username = "steg";
+    Client client = new Client("zspadar");
+    Message message = new Message("Peterke","Dombo3 message from mock test");
+    ClientMessage clientMessage = new ClientMessage(message, client);
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonInput = mapper.writeValueAsString(clientMessage);
 
-    Client client = new Client("steg");
-    Message message = new Message(username,text);
-    ClientMessage clientMessage = new ClientMessage(message,client);
+    mockMvc.perform(post("/api/message/receive")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(jsonInput))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("ok"));
+  }
 
-    Gson gson = new Gson();
-    String json = gson.toJson(clientMessage);
+  @Test
+  public void ReceiveUnValidMessage() throws Exception {
+    Client client = new Client("zspadar");
+    Message message = new Message("Peterke","");
+    ClientMessage clientMessage = new ClientMessage(message, client);
+    ObjectMapper mapper = new ObjectMapper();
+    String jsonInput = mapper.writeValueAsString(clientMessage);
 
-    System.out.println(json);
-    mockMvc.perform(post("/api/message/receive").contentType(MediaType.APPLICATION_JSON).content(
-        "{ \"message\": {\"id\": 7655482,\"username\": \"EggDice\",\"text\": \"How you doin'?\",\"timestamp\": 1322018752992},\"client\": {\"id\": \"EggDice\"}}"
-//          json
-    )).andExpect(status().isOk()).andExpect(jsonPath("$.status").value("ok"));
+    mockMvc.perform(post("/api/message/receive")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(jsonInput))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("error"))
+        .andExpect(jsonPath("$.message").value());
   }
 }

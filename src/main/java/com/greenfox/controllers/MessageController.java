@@ -5,6 +5,7 @@ import com.greenfox.model.Response;
 import com.greenfox.repository.MessageRepo;
 import com.greenfox.repository.UserRepo;
 import com.greenfox.services.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
