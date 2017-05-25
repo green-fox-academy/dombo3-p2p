@@ -68,6 +68,6 @@ public class MessageControllerTest {
         .content(jsonInput))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("error"))
-        .andExpect(jsonPath("$.message").value());
+        .andExpect(jsonPath("$.message").value("valami"));
   }
 }
