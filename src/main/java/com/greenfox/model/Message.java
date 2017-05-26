@@ -29,6 +29,13 @@ public class Message {
     this.id = 1000000 + (long)(Math.random() * 9000000);
   }
 
+  public Message(long id, String username, String text, Timestamp timestamp) {
+    this.id = id;
+    this.username = username;
+    this.text = text;
+    this.timestamp = timestamp;
+  }
+
   public long getId() {
     return id;
   }

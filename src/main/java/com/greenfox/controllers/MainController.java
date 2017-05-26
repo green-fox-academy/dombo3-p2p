@@ -31,10 +31,10 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 public class MainController {
 
-  LogRepo logRepo;
-  UserRepo userRepo;
-  UserService userService;
-  MessageRepo messageRepo;
+  private LogRepo logRepo;
+  private UserRepo userRepo;
+  private UserService userService;
+  private MessageRepo messageRepo;
 
   @Autowired
   public MainController(LogRepo logRepo, UserRepo userRepo, UserService userService, MessageRepo messageRepo) {
@@ -46,20 +46,9 @@ public class MainController {
 
   @RequestMapping("/")
   public String main(HttpServletRequest request, Model model) {
-
-    System.out.println(System.getenv("CHAT_APP_PEER_ADDRESS"));
-
     createLog(request,"INFO");
-
-    Iterable<Message> messages = messageRepo.findAll();
-    model.addAttribute("messages", messages);
-
-    if (userService.getCurrentAccount() == null) {
-      return "enter";
-    } else {
-      System.out.println(userService.getCurrentAccount().getUsername());
-      return "index";
-    }
+    model.addAttribute("messages", messageRepo.findAll());
+    return userService.getCurrentAccount() == null ? "enter" : "index";
   }
 
   @GetMapping("/enter")
@@ -69,30 +58,20 @@ public class MainController {
   }
 
   @PostMapping("/enter")
-  public String saveUser(HttpServletRequest request,
-      @RequestParam(value = "username") String username) throws Exception {
-
-    if (username.equals("")) { //if input field is empty
+  public String saveUser(HttpServletRequest request, @RequestParam(value = "username") String username) throws Exception {
+    if (username.isEmpty()) {
       throw new UsernameException();
-    } else if (userRepo.count() == 0) { //if database is empty, create account
-      System.out.println("Empty database case, create new account"); //log INFO
-      Account account = new Account(username);   //Sad code, code duplicate because: cannot get into for cycle in empty database
-      userService.setCurrentAccount(account);
-      userRepo.save(account);
+    } else if (userRepo.count() == 0) {
+      createAccount(username);
     } else {
-      for (Account account : userRepo.findAll()) { //if find similar username
-        if (account.getUsername().equals(username)) {
-          System.out.println("EXCEPTION Find a similar username, please find another one"); //log ERROR
-          throw new SimilarUserException();
+      for (Account account : userRepo.findAll()) {
+        if (!account.getUsername().equals(username)) {
+          createAccount(username);
         } else {
-          System.out.println("Good choice Created a new account"); //log INFO
-          Account newuser = new Account(username);
-          userService.setCurrentAccount(account);
-          userRepo.save(newuser);
+          throw new SimilarUserException();
         }
       }
     }
-
     createLog(request,"INFO");
     return "redirect:/";
   }
@@ -100,27 +79,23 @@ public class MainController {
   @PostMapping("/update/{id}")
   public String update(HttpServletRequest request,
       @PathVariable long id, @RequestParam("username") String username) throws Exception {
-    if (username.equals("")) {                //if input field is empty
+    if (username.isEmpty()) {
       throw new UsernameException();
     } else {
-      Account account = userRepo.findOne(id); //update in the Database;
+      Account account = userRepo.findOne(id);
       account.setUsername(username);
       userRepo.save(account);
-      userService.getCurrentAccount().setUsername(username); //update for the View
+      userService.getCurrentAccount().setUsername(username);
     }
-
     createLog(request,"INFO");
     return "redirect:/";
   }
 
   @PostMapping("/send")
   public String send(HttpServletRequest request, Model model, @RequestParam("message") String message) {
-
     Message newMessage = new Message(userService.getCurrentAccount().getUsername(), message);
-
     messageRepo.save(newMessage);
-    Iterable<Message> messages = messageRepo.findAllByOrderByTimestampAsc();
-    model.addAttribute("messages", messages);
+    model.addAttribute("messages", messageRepo.findAllByOrderByTimestampAsc());
 
     RestTemplate restTemplate = new RestTemplate();
     restTemplate.postForObject(MessageService.CHAT_APP_PEER_ADDRESS,new ClientMessage(newMessage, new Client(MessageService.CHAT_APP_UNIQUE_ID)),Response.class);
@@ -135,6 +110,12 @@ public class MainController {
     logRepo.save(log);
   }
 
+  public void createAccount(String username) {
+    Account account = new Account(username);
+    userService.setCurrentAccount(account);
+    userRepo.save(account);
+  }
+
   @ModelAttribute
   public void add(Model model) {
     model.addAttribute("account", userService.getCurrentAccount());
@@ -143,29 +124,18 @@ public class MainController {
 
   @ExceptionHandler(UsernameException.class)
   public String UsernameException(HttpServletRequest request, Model model) {
-
     createLog(request,"ERROR");
-
     UsernameExceptionMessage error = new UsernameExceptionMessage("The username field is empty");
-    System.out.println(error.getError());
     model.addAttribute("usernameerror",error);
     model.addAttribute("account", userService.getCurrentAccount());
-
-    if (request.getServletPath().startsWith("/update")) {
-      return "index";
-    }
-    return "enter";
+    return request.getServletPath().startsWith("/update") ? "index" : "enter";
   }
 
   @ExceptionHandler(SimilarUserException.class)
   public String SimilarUserException(HttpServletRequest request, Model model) {
-
     createLog(request,"ERROR");
-
     SimilarUserExceptionMessage error = new SimilarUserExceptionMessage("There is a similar user in the database, please find another one");
-    System.out.println(error.getError());
     model.addAttribute("similarusererror", error);
-
     return "enter";
   }
 }

@@ -2,13 +2,12 @@ package com.greenfox.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.greenfox.P2pApplication;
 import com.greenfox.model.Client;
 import com.greenfox.model.ClientMessage;
@@ -34,6 +33,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class MessageControllerTest {
 
   private MockMvc mockMvc;
+  private String text;
 
   @Autowired
   private MessageRepo messageRepo;
@@ -91,5 +91,14 @@ public class MessageControllerTest {
     Iterable<Message> messages = messageRepo.findAll();
     Message firstMessage = Lists.newArrayList(messages).get(0);
     assertThat(firstMessage.getText()).isEqualTo("Dombo3 message from mock test");
+  }
+
+  @Test
+  public void getMessagesForAndroid() throws Exception {
+
+    mockMvc.perform(get("/api/message")
+        .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
+//        .andExpect(jsonPath("$.messages").value("[{\"id\": 7655482,\"username\": \"petikake\",\"text\": \"Anroid rulez\",\"timestamp\": 1322018752992}]"));
   }
 }

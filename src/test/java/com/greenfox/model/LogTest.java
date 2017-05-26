@@ -4,28 +4,29 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Before;
 import org.junit.Test;
 
 public class LogTest {
 
-  Map<String, String[]> myMap = new HashMap<>();
-  Log myLog = new Log();
+  private Map<String, String[]> myMap = new HashMap<>();
+  private Log myLog = new Log();
 
-  @Test
-  public void testRequestParamKey() {
+  @Before
+  public void setup() throws Exception {
     String[] values={"FirstValue"};
     myMap.put("parameter", values);
     myLog.setRequestData(myMap);
-//    myLog.RequestDataToString();
+  }
+
+
+  @Test
+  public void testRequestParamKey() {
     assertEquals("parameter", myLog.getRequestParamKey());
   }
 
   @Test
   public void testRequestParamValue() {
-    String[] values={"FirstValue"};
-    myMap.put("parameter", values);
-    myLog.setRequestData(myMap);
-//    myLog.RequestDataToString();
     assertEquals("FirstValue", myLog.getRequestParamValue());
   }
 }

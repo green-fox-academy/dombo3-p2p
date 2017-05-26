@@ -32,7 +32,7 @@ public class RepositoryTest {
 
   @Test
   public void testExample() throws Exception {
-    this.entityManager.persist(new Account("dombo3"));
+    entityManager.persist(new Account("dombo3"));
     Account account = this.userRepo.findByUsername("dombo3");
     assertThat(account.getUsername()).isEqualTo("dombo3");
   }
